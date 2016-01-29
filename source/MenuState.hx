@@ -17,25 +17,11 @@ class MenuState extends FlxState
 
 	override public function create():Void
 	{
-		gridSprite = new FlxSprite(0,0).makeGraphic(FlxG.width,FlxG.height,0xFFBBDEFB);
-		add(gridSprite);
-
-		var lineStyle = { color: 0xFF3F51B5, thickness: 3.0 };
-		var gridStartX = 10;
-		var gridStartY = 10;
-		var gridCellsX = 10;
-		var gridCellsY = 10;
-		var gridSpanX = 40;
-		var gridSpanY = 40;
-		var gridSizeX = gridSpanX*gridCellsX;
-		var gridSizeY = gridSpanY*gridCellsY;
-		for (i in 0 ... gridCellsX+1) {
-			gridSprite.drawLine(gridStartX + i*gridSpanX, gridStartY, gridStartX + i*gridSpanX, gridStartY + gridSizeY,lineStyle);							
-		}
-		for (i in 0 ... gridCellsY+1) {
-			gridSprite.drawLine(gridStartX , gridStartY + i*gridSpanY, gridStartX + gridSizeX, gridStartY  + i*gridSpanY,lineStyle);							
-		}
+		
+		new Grid(10,10,10,10,40,40);
 	}
+	
+		
 	
 	/**
 	 * Function that is called when this state is destroyed - you might want to 
