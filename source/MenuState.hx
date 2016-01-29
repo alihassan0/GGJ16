@@ -17,7 +17,8 @@ class MenuState extends FlxState
 
 	override public function create():Void
 	{
-		
+		this.bgColor = 0xFFBBDEFB;
+		FlxG.camera.antialiasing = true;
 		new Grid(10,10,10,10,40,40);
 	}
 	
