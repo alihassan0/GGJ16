@@ -2,7 +2,7 @@ package;
 
 import flixel.FlxSprite;
 import flixel.FlxG;
-
+import flixel.math.FlxPoint;
 using flixel.util.FlxSpriteUtil;
 
 class Grid extends FlxSprite{
@@ -19,9 +19,23 @@ class Grid extends FlxSprite{
 		this.gridSpanX = gridSpanX;
 		this.gridSpanY = gridSpanY;
 		makeGraphic(gridSpanX*gridCellsX + 35, gridSpanY*gridCellsY+5,0x00000000);
-		drawGrid(gridCellsX,gridCellsY,gridSpanX,gridSpanY);
+		var gridSizeX:Int = 10;
+		var gridSizeY:Int = 10;
+		var cellSize = 40;
+		for(i in 0...Math.floor(gridSizeY/2)){
+			for(j in 0...gridSizeX){
+				if(gridSizeY%2==0 || i+1<gridSizeY/2 || j%2==0){
+					var hexagonX:Float = cellSize*j/2;
+					var hexagonY:Float = cellSize*i*1.5+(cellSize/4*3)*(j%2);	
+					new Hexagon(hexagonX,hexagonY,cellSize);
+				}
+			}
+		}
+
+
+		//drawGrid(gridCellsX,gridCellsY,gridSpanX,gridSpanY);
 		FlxG.state.add(this);
-		fillGridWithBalls();
+		//fillGridWithBalls();
 	}
 	public function drawGrid (gridCellsX:Int,gridCellsY:Int,gridSpanX:Int,gridSpanY:Int)
 	{
