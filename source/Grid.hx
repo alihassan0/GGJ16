@@ -7,37 +7,120 @@ using flixel.util.FlxSpriteUtil;
 
 class Grid extends FlxSprite{
 
-	private var gridCellsX:Int;
-	private var gridCellsY:Int;
-	private var gridSpanX:Int;
-	private var gridSpanY:Int;
 
-	public function new(x:Int, y:Int,gridCellsX:Int,gridCellsY:Int,gridSpanX:Int,gridSpanY:Int) {
+	private var hexagonWidth:Int = 40;
+	private var hexagonHeight:Int = 40;
+	private var sectorWidth:Float ;
+	private var sectorHeight:Float ;
+	private var gradient:Float;
+	private var marker:FlxSprite;
+	public function new(x:Int, y:Int) {
 		super(x,y);
-		this.gridCellsX = gridCellsX;
-		this.gridCellsY = gridCellsY;
-		this.gridSpanX = gridSpanX;
-		this.gridSpanY = gridSpanY;
-		makeGraphic(gridSpanX*gridCellsX + 35, gridSpanY*gridCellsY+5,0x00000000);
-		var gridSizeX:Int = 10;
-		var gridSizeY:Int = 10;
+		sectorWidth = hexagonWidth;
+		sectorHeight = hexagonHeight/4*3;
+		gradient = (hexagonHeight/4)/(hexagonWidth/2);
+		makeGraphic(400,400,0x00000000);
+		
+		var gridSizeX:Int = 12;
+		var gridSizeY:Int = 16;
 		var cellSize = 40;
 		for(i in 0...Math.floor(gridSizeY/2)){
 			for(j in 0...gridSizeX){
 				if(gridSizeY%2==0 || i+1<gridSizeY/2 || j%2==0){
 					var hexagonX:Float = cellSize*j/2;
-					var hexagonY:Float = cellSize*i*1.5+(cellSize/4*3)*(j%2);	
+					var hexagonY:Float = cellSize*i*1.5+(cellSize/4*3)*(j%2);
+					/*var hexagonX = hexagonWidth*i*1.5+(hexagonWidth/4*3)*(j%2);
+					var hexagonY = hexagonHeight*j/2;*/		
 					new Hexagon(hexagonX,hexagonY,cellSize);
 				}
 			}
 		}
-
-
-		//drawGrid(gridCellsX,gridCellsY,gridSpanX,gridSpanY);
 		FlxG.state.add(this);
+		marker = new FlxSprite(0,0).makeGraphic(8,8,0xFFFF0000);
+		//drawGrid(gridCellsX,gridCellsY,gridSpanX,gridSpanY);
+		FlxG.state.add(marker);
 		//fillGridWithBalls();
 	}
-	public function drawGrid (gridCellsX:Int,gridCellsY:Int,gridSpanX:Int,gridSpanY:Int)
+	function checkHex(){
+          var candidateX = Math.floor((FlxG.mouse.x-x)/sectorWidth);
+          var candidateY = Math.floor((FlxG.mouse.y-y)/sectorHeight);
+          var deltaX = (FlxG.mouse.x-x)%sectorWidth;
+          var deltaY = (FlxG.mouse.y-y)%sectorHeight; 
+          if(candidateY%2==0){
+               if(deltaY<((hexagonHeight/4)-deltaX*gradient)){
+                    candidateX--;
+                    candidateY--;
+               }
+               if(deltaY<((-hexagonHeight/4)+deltaX*gradient)){
+                    candidateY--;
+               }
+          }    
+          else{
+               if(deltaX>=hexagonWidth/2){
+                    if(deltaY<(hexagonHeight/2-deltaX*gradient)){
+                         candidateY--;
+                    }
+               }
+               else{
+                    if(deltaY<deltaX*gradient){
+                         candidateY--;
+                    }
+                    else{
+                         candidateX--;
+                    }
+               }
+          }
+          placeMarker(candidateX,candidateY);
+     }
+	/*function checkHex(){
+          var candidateX:Float = Math.floor((FlxG.mouse.x-x)/40);
+          var candidateY:Float = Math.floor((FlxG.mouse.y-y)/35);
+          var deltaX = (FlxG.mouse.x-x)%sectorWidth;
+          var deltaY = (FlxG.mouse.y-y)%sectorHeight; 
+
+          if(candidateX%2==0){
+               if(deltaX<((hexagonWidth/4)-deltaY*gradient)){
+                    candidateX--;
+                    candidateY--;
+               }
+               if(deltaX<((-hexagonWidth/4)+deltaY*gradient)){
+                    candidateX--;
+               }
+          }    
+          else{
+               if(deltaY>=hexagonHeight/2){
+                    if(deltaX<(hexagonWidth/2-deltaY*gradient)){
+                         candidateX--;
+                    }
+               }
+               else{
+                    if(deltaX<deltaY*gradient){
+                         candidateX--;
+                    }
+                    else{
+                         candidateY--;
+                    }
+               }
+          }
+          placeMarker(candidateX,candidateY);
+     }*/
+    public function placeMarker(posX:Float,posY:Float)
+    {
+		/*if(posX<0 || posY<0 || posX>=gridSizeX || posY>columns[posX%2]-1){
+			marker.visible=false;
+		}
+		else{
+			marker.visible=true;*/
+          	marker.reset(-4+hexagonWidth*posX,-4+hexagonHeight/4*3*posY+hexagonHeight/2);
+			if(posY%2==0){
+				marker.x += hexagonWidth/2;
+			}
+			else{
+				marker.x += hexagonWidth;
+			}
+		//}
+	}
+	/*public function drawGrid (gridCellsX:Int,gridCellsY:Int,gridSpanX:Int,gridSpanY:Int)
 	{
 		var gridSizeX = gridSpanX*gridCellsX;
 		var gridSizeY = gridSpanY*gridCellsY;
@@ -48,8 +131,8 @@ class Grid extends FlxSprite{
 		for (i in 0 ... gridCellsY+1) {
 			drawLine(0 ,0 + i*gridSpanY, 0+ gridSizeX,0  + i*gridSpanY,lineStyle);							
 		}
-	}
-	public function fillGridWithBalls ()
+	}*/
+	/*public function fillGridWithBalls ()
 	{
 		for (i in 0 ... gridCellsX) {
 			for (j in 0 ... gridCellsY) {
@@ -57,5 +140,10 @@ class Grid extends FlxSprite{
 					new Ball(x + i*gridSpanX , y + j*gridSpanY , 12,8);
 			}
 		}
+	}*/
+	override public function update(elapsed:Float):Void
+	{
+		super.update(elapsed);
+		checkHex();
 	}
 }

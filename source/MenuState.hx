@@ -19,8 +19,8 @@ class MenuState extends FlxState
 	{
 		this.bgColor = 0xFFBBDEFB;
 		FlxG.camera.antialiasing = true;
-		new Grid(10,10,10,10,40,40);
-		
+		new Grid(0,0);
+
 	}
 	
 		
