@@ -1,5 +1,9 @@
 package;
+/*
+#TODO : only allow lines at straight lines
 
+
+*/
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
@@ -62,21 +66,31 @@ class Grid extends FlxSprite{
 
 		if (selectedBalls.indexOf(ball) != -1)
 			return ;
-		else 
+		else
 		{
-			trace("found element @ index = " + selectedBalls.indexOf(ball));
-			selectedBalls.push(ball);
-			if(selectedBalls.length > 1)
+			if(selectedBalls.length == 0) 
+				selectedBalls.push(ball);
+			else 
 			{
-				var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
-				var startball:Ball = selectedBalls[selectedBalls.length-1];
-				var endBall:Ball = selectedBalls[selectedBalls.length-2];
-				var startPoint = new FlxPoint(startball.x + 20, startball.y + 20);
-				var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
-
-				linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
+				var lastBall:Ball = selectedBalls[selectedBalls.length-1];
+				trace(Math.abs(lastBall.x- ball.x)*1.5,Math.abs(lastBall.y- ball.y));
+				//this *1.5 is one of the ugliest hacks i ever used
+				if(lastBall.indexY == ball.indexY || 
+					(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2)
+				{
+					selectedBalls.push(ball);
+					var startball:Ball = selectedBalls[selectedBalls.length-1];
+					var endBall:Ball = selectedBalls[selectedBalls.length-2];
+					//to be refractored later 
+					var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
+					var startPoint = new FlxPoint(startball.x + 20, startball.y + 20);
+					var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
+						linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
+				}
 			}
+
 		}
+			//trace("found element @ index = " + selectedBalls.indexOf(ball));
 	}
 	public function highLight(hexagon:Hexagon)
 	{
@@ -157,7 +171,7 @@ class Grid extends FlxSprite{
 			if(balls[i].indexX == pointX && balls[i].indexY == pointY)
 				found = true;
 		}
-		trace(found);
+		//trace(found);
 		return !found;
 	}
 	/*public function drawGrid (gridCellsX:Int,gridCellsY:Int,gridSpanX:Int,gridSpanY:Int)

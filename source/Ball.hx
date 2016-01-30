@@ -25,7 +25,7 @@ class Ball extends FlxSprite {
 		FlxG.state.add(this);
 	}
 	function onMouseDown(sprite:FlxSprite) {
-		trace(indexX,indexY);
+		//trace(indexX,indexY);
 		grid.clearSelection();	
 		highLightAdjacents();
 		grid.selectBall(this);
