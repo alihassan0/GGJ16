@@ -1,11 +1,15 @@
 package;
 /*
-#TODO : calculate hit tiles
+#TODO : calculate hit tiles for tringles
 #TODO : enhancing the loading functionaity 
 #TODO : calculating steps 
 #TODO : Lightining ray
-#TODO : add level tombs count text;
+#TODO : update level tombs count text;
 #TODO : make a better response to the tomb kill()
+#TODO : attach to each level it's count of Moves
+#TODO : restart state after all steps are done or with a button
+#TODO : fix bugs that happens after you finish one connection 
+#TODO : fix a bug where you can connect tiles even though they are not on the same line 
 */
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -100,7 +104,7 @@ class Grid extends FlxSprite{
 		{
 			//advanceLevel();
 			Reg.level ++;		
-			FlxG.resetState();
+			restartLevel();
 		}
 	}
 	public function loadArray(data:Array<Int>,steps:Int)
@@ -315,7 +319,7 @@ class Grid extends FlxSprite{
 					selectedBalls.splice(0,selectedBalls.length);
 					clearSelection();
 					linesSprite.fill(0x00000000);
-					steps--;
+					decrementSteps();
 					//balls.push(new Ball(,12,8,this,tileCoordinates.x,tileCoordinates.y));
 					//clear selected
 				}
@@ -325,35 +329,22 @@ class Grid extends FlxSprite{
 		{
 			//linesSprite.color = 0x00000000;
 		}
+		if(FlxG.keys.justPressed.R)
+			restartLevel();
 	}
 	
-	private function sign ( p1:FlxPoint,  p2:FlxPoint,  p3:FlxPoint):Float
+	private function restartLevel ()
 	{
-		var p2p3:FlxPoint = new FlxPoint(p2.x-p3.x,p2.y-p3.y);  
-		var p1p3:FlxPoint = new FlxPoint(p1.x-p3.x,p1.y-p3.y);  
-		trace(p2p3,p1p3);
-		//var s1:Float = p1p3.x*p2p3.x + p1p3.y*p2p3.y ; 
-		//var s2:Float = p2p3.x*p1p3.x + p2p3.y*p1p3.y ; 
-		var s1:Float = p1p3.x*p2p3.y - p1p3.y*p2p3.x ; 
-		var s2:Float = p2p3.x*p1p3.y - p2p3.y*p1p3.x ; 
-		var s12:Float = s1-s2;
-		trace(s1,s2);
-		return s12;
-	    //return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+		FlxG.resetState();
 	}
-
-	/*private function checkpointInTriangle (pt:FlxPoint, v1:FlxPoint, v2:FlxPoint, v3:FlxPoint):Bool
+	private function decrementSteps ()
 	{
-	    trace(pt,v1,v2,v3);
-	    var b1:Bool;
-	    var b2:Bool;
-	    var b3:Bool;
-	    b1 = sign(pt, v1, v2) < 0.0;
-	    b2 = sign(pt, v2, v3) < 0.0;
-	    b3 = sign(pt, v3, v1) < 0.0;
-	    trace(sign(pt, v1, v2),sign(pt, v2, v3),sign(pt, v3, v1));
-	    return ((b1 == b2) && (b2 == b3));
-	}*/
+		steps --;
+		if(steps < 0)
+		{
+			restartLevel();
+		}	
+	}
 	public function checkPointInTriangle( p:FlxPoint,  p0:FlxPoint,  p1:FlxPoint,  p2:FlxPoint):Bool
 	{
 	    var s:Float = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
