@@ -1,14 +1,12 @@
 package;
 /*
+#TODO : fix bugs that happens after you finish one connection 
 #TODO : calculate hit tiles for tringles
 #TODO : enhancing the loading functionaity 
 #TODO : calculating steps 
 #TODO : Lightining ray
 #TODO : update level tombs count text;
 #TODO : make a better response to the tomb kill()
-#TODO : attach to each level it's count of Moves
-#TODO : restart state after all steps are done or with a button
-#TODO : fix bugs that happens after you finish one connection 
 #TODO : fix a bug where you can connect tiles even though they are not on the same line 
 */
 import flixel.FlxSprite;

@@ -35,6 +35,7 @@ class Reg
 	 */
 	public static var saves:Array<FlxSave> = [];
 
+	public static var levelsMovesData:Array<Int> = [1,10,14,19];  
 	public static var levelsData:Array<Array<Int>> = 
 	[
 	[0,0,0,0,0,0,
