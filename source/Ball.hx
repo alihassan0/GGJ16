@@ -26,6 +26,10 @@ class Ball extends FlxSprite {
 	}
 	function onMouseDown(sprite:FlxSprite) {
 		trace(indexX,indexY);
+		grid.clearSelection();	
+		highLightAdjacents();
+	}
+	function highLightAdjacents() {
 		var adjacentHexagons:Array<Hexagon> = new Array<Hexagon>();
 		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX+1,indexY)));
 		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX-1,indexY)));
@@ -36,7 +40,6 @@ class Ball extends FlxSprite {
 		for (i in 0 ... adjacentHexagons.length) {
 			grid.highLight(adjacentHexagons[i]);
 		}
-
 	}
 	function onMouseUp(sprite:FlxSprite) {
 		//FlxG.switchState(new PlayState());

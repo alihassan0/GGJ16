@@ -46,6 +46,12 @@ class Grid extends FlxSprite{
 		FlxG.state.add(marker);
 		//fillGridWithBalls();
 	}
+	public function clearSelection()
+	{
+		for (i in 0 ... hexagons.length) {
+			hexagons[i].color = 0xFF004D40;
+		}
+	}
 	public function selectBall(ball:Ball)
 	{
 		if (ball == selectedBall)
