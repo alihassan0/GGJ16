@@ -218,10 +218,21 @@ class Grid extends FlxSprite{
 			var tileCoordinates:FlxPoint = checkHex();
 			if(tileCoordinates != null)
 			{
-				//trace(tileCoordinates.x,tileCoordinates.y);
+				tileCoordinates.x--;
 				placeMarker(getMidPointFromCoordinates(checkHex()));
-				if(emptyCellAt(tileCoordinates.x-1,tileCoordinates.y))
-					balls.push(new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8,this,tileCoordinates.x-1,tileCoordinates.y));
+				if(emptyCellAt(tileCoordinates.x,tileCoordinates.y) 
+					&& getHexagonWithCoordinates(tileCoordinates).color == 0xFFFFFFFF)
+				{
+					selectedBalls[selectedBalls.length-1].reset(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2);
+					selectedBalls[selectedBalls.length-1].indexX = Math.floor(tileCoordinates.x);
+					selectedBalls[selectedBalls.length-1].indexY = Math.floor(tileCoordinates.y);
+					selectedBalls.splice(0,selectedBalls.length);
+					clearSelection();
+					linesSprite.fill(0x00000000);
+					//steps--;
+					//balls.push(new Ball(,12,8,this,tileCoordinates.x,tileCoordinates.y));
+					//clear selected
+				}
 			}
 		}
 		if(FlxG.mouse.justReleased)
