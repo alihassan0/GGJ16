@@ -25,13 +25,14 @@ class Ball extends FlxSprite {
 		FlxG.state.add(this);
 	}
 	function onMouseDown(sprite:FlxSprite) {
+		trace(indexX,indexY);
 		var adjacentHexagons:Array<Hexagon> = new Array<Hexagon>();
 		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX+1,indexY)));
 		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX-1,indexY)));
-		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX+1,indexY+1)));
-		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX+1,indexY-1)));		
-		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX,indexY+1)));
-		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX,indexY-1)));
+		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX+1-((indexY+1)%2),indexY+1)));
+		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX+1-((indexY+1)%2),indexY-1)));		
+		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX-((indexY+1)%2),indexY+1)));
+		adjacentHexagons.push(grid.getHexagonWithCoordinates(new FlxPoint(indexX-((indexY+1)%2),indexY-1)));
 		for (i in 0 ... adjacentHexagons.length) {
 			grid.highLight(adjacentHexagons[i]);
 		}
