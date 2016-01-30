@@ -4,7 +4,8 @@ package;
 #TODO : enhancing the loading functionaity 
 #TODO : calculating steps 
 #TODO : Lightining ray
-
+#TODO : add level tombs count text;
+#TODO : make a better response to the tomb kill()
 */
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -60,28 +61,29 @@ class Grid extends FlxSprite{
 		selectedBalls = new Array<Ball>();
 		linesSprite = new FlxSprite(0,0).makeGraphic(FlxG.width,FlxG.height,0x00000000);
 		FlxG.state.add(linesSprite);
-		for (i in 0 ... hexagons.length) {
-			if(PointInTriangle(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+
+		/*for (i in 0 ... hexagons.length) {
+			if(checkPointInTriangle(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
 				getMidPointFromCoordinates(new FlxPoint(0,5)),
 				getMidPointFromCoordinates(new FlxPoint(3,0)),
 				getMidPointFromCoordinates(new FlxPoint(5,5))))
 			{
 				hexagons[i].color = 0xFF00FF00;
 			}
-			if(PointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+			if(checkPointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
 				getMidPointFromCoordinates(new FlxPoint(3,2)),
 				getMidPointFromCoordinates(new FlxPoint(5,5))))
 			{
 				hexagons[i].color = 0xFF00FFFF;
 			}/*
-			if(PointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+			if(checkPointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
 				getMidPointFromCoordinates(new FlxPoint(1,1)),
 				getMidPointFromCoordinates(new FlxPoint(5,5))))
 			{
 				hexagons[i].color = 0xFF00FFFF;
 			}*/
-		}
-		if(PointInLine(getMidPointFromCoordinates(new FlxPoint(3,3)),
+		/*}
+		if(checkPointInLine(getMidPointFromCoordinates(new FlxPoint(3,3)),
 			getMidPointFromCoordinates(new FlxPoint(0,5)),
 			getMidPointFromCoordinates(new FlxPoint(5,5))))
 		{
@@ -90,8 +92,7 @@ class Grid extends FlxSprite{
 		getHexagonWithCoordinates(new FlxPoint(0,5)).color = 0xFF000000;
 		getHexagonWithCoordinates(new FlxPoint(3,0)).color = 0xFF000000;
 		getHexagonWithCoordinates(new FlxPoint(5,5)).color = 0xFF000000;
-		getHexagonWithCoordinates(new FlxPoint(1,1)).color = 0xFF000000;
-
+		getHexagonWithCoordinates(new FlxPoint(1,1)).color = 0xFF000000;*/
 	}
 	public function loadArray(data:Array<Int>,steps:Int)
 	{
@@ -131,18 +132,49 @@ class Grid extends FlxSprite{
 					Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2)
 				{
 					selectedBalls.push(ball);
-					var startball:Ball = selectedBalls[selectedBalls.length-1];
-					var endBall:Ball = selectedBalls[selectedBalls.length-2];
-					//to be refractored later 
-					var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
-					var startPoint = new FlxPoint(startball.x + 20, startball.y + 20);
-					var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
-						linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
+					makeConnection();
+
 				}
 			}
 
 		}
-			//trace("found element @ index = " + selectedBalls.indexOf(ball));
+	}
+
+	public function makeConnection()
+	{
+		var startBall:Ball = selectedBalls[selectedBalls.length-1];
+		var endBall:Ball = selectedBalls[selectedBalls.length-2];
+		//to be refractored later 
+		var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
+		var startPoint = new FlxPoint(startBall.x + 20, startBall.y + 20);
+		var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
+		linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
+		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
+		for (i in 0 ... hexagons.length) {
+			if(checkPointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+				getMidPointFromCoordinates(new FlxPoint(startBall.indexX,startBall.indexY)),
+				getMidPointFromCoordinates(new FlxPoint(endBall.indexX,endBall.indexY))))
+			{
+				collidedHexagons.push(hexagons[i]);
+				hexagons[i].color = 0xFF00FFFF;
+			}
+		}
+		trace(collidedHexagons.length);
+		trace(tombs.length);
+		for (i in 0 ... collidedHexagons.length) {
+			for (j in 0 ... tombs.length) 
+			{
+				if(collidedHexagons[i].indexX == tombs[j].indexX && 
+					collidedHexagons[i].indexY == tombs[j].indexY )
+				{
+					//you need to check for multiples and all that .. 
+					tombs[j].kill();
+					return;
+				}
+				else
+					trace(collidedHexagons[i].indexX,collidedHexagons[i].indexY,tombs[j].indexX,tombs[j].indexY);
+			}
+		}
 	}
 	public function highLight(hexagon:Hexagon)
 	{
@@ -156,6 +188,10 @@ class Grid extends FlxSprite{
 				return hexagons[i];
 		}
 		return null;
+	}
+	public function getCoordinatesWithHexagon(hexagon:Hexagon):FlxPoint
+	{
+		return new FlxPoint(hexagon.indexX,hexagon.indexY);
 	}
 	function checkHex(){
 	    var candidateX = Math.floor((FlxG.mouse.x-x)/sectorWidth);
@@ -297,7 +333,7 @@ class Grid extends FlxSprite{
 	    //return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 	}
 
-	/*private function pointInTriangle (pt:FlxPoint, v1:FlxPoint, v2:FlxPoint, v3:FlxPoint):Bool
+	/*private function checkpointInTriangle (pt:FlxPoint, v1:FlxPoint, v2:FlxPoint, v3:FlxPoint):Bool
 	{
 	    trace(pt,v1,v2,v3);
 	    var b1:Bool;
@@ -309,7 +345,7 @@ class Grid extends FlxSprite{
 	    trace(sign(pt, v1, v2),sign(pt, v2, v3),sign(pt, v3, v1));
 	    return ((b1 == b2) && (b2 == b3));
 	}*/
-	public function PointInTriangle( p:FlxPoint,  p0:FlxPoint,  p1:FlxPoint,  p2:FlxPoint):Bool
+	public function checkPointInTriangle( p:FlxPoint,  p0:FlxPoint,  p1:FlxPoint,  p2:FlxPoint):Bool
 	{
 	    var s:Float = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
 	    var t:Float = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
@@ -327,12 +363,11 @@ class Grid extends FlxSprite{
 	    //changed <= a to < a
 	    return s > 0 && t > 0 && (s + t) < a;
 	}
-	public function PointInLine( p:FlxPoint,  p0:FlxPoint,  p1:FlxPoint) 
+	public function checkPointInLine( p:FlxPoint,  p0:FlxPoint,  p1:FlxPoint) 
 	{
 		var tx:Float = (p.x-p0.x)/(p1.x-p0.x);
 		var ty:Float = (p.y-p0.y)/(p1.y-p0.y);
-		trace(tx,ty);
-		if((p.y == p0.y && p0.y == p1.y)||(tx == ty && tx > 0 && tx < 1))
+		if((p.y == p0.y && p0.y == p1.y && p.x != p0.x && p.x != p1.x )||(tx == ty && tx > 0 && tx < 1))
 			{
 				trace("Btngan");
 				return true;
