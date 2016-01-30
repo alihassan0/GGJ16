@@ -19,7 +19,7 @@ class Grid extends FlxSprite{
 	private	var gridSizeY:Int = 10;
 	
 	private var selectedBall:Ball;
-	private var hexagons:Array<Array<Hexagon>>;
+	public var hexagons:Array<Hexagon>;
 	public function new(x:Int, y:Int) {
 		super(x,y);
 		sectorWidth = hexagonWidth;
@@ -29,14 +29,14 @@ class Grid extends FlxSprite{
 
 		var cellSize = 40;
 		columns = [Math.ceil(gridSizeX/2),Math.floor(gridSizeX/2)];
-		hexagons = new Array<Array<Hexagon>>();
+		hexagons = new Array<Hexagon>();
 		for(i in 0...Math.floor(gridSizeY/2)){
-			hexagons[i] = new Array<Hexagon>();
 			for(j in 0...gridSizeX){
 				if(gridSizeY%2==0 || i+1<gridSizeY/2 || j%2==0){
 					var hexagonX:Float = cellSize*j/2;
 					var hexagonY:Float = cellSize*i*1.5+(cellSize/4*3)*(j%2);
-					hexagons[i].push(new Hexagon(hexagonX,hexagonY,cellSize));
+					//trace((i%gridSizeX)*2+j%2,Math.floor((Math.floor(j%gridSizeX)/2)));
+					hexagons.push(new Hexagon(hexagonX,hexagonY,cellSize,this,Math.floor((Math.floor(j%gridSizeX)/2)),(i%gridSizeX)*2+j%2));
 				}
 			}
 		}
@@ -55,6 +55,19 @@ class Grid extends FlxSprite{
 			selectedBall = ball;
 			//code to follow
 		}
+	}
+	public function highLight(hexagon:Hexagon)
+	{
+		if(hexagon!= null)
+			hexagon.color = 0xFFFFFFFF;
+	}
+	public function getHexagonWithCoordinates(point:FlxPoint):Hexagon
+	{
+		for (i in 0 ... hexagons.length) {
+			if(hexagons[i].indexX == point.x && hexagons[i].indexY == point.y )
+				return hexagons[i];
+		}
+		return null;
 	}
 	function checkHex(){
 	    var candidateX = Math.floor((FlxG.mouse.x-x)/sectorWidth);
@@ -142,9 +155,14 @@ class Grid extends FlxSprite{
 		
 		if(FlxG.mouse.pressed)
 		{
-			trace("added new FlxSprite @",marker.x+marker.width/2,marker.y+marker.height/2);
-			placeMarker(getMidPointFromCoordinates(checkHex()));
-			new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8);
+			//trace("added new FlxSprite @",marker.x+marker.width/2,marker.y+marker.height/2);
+			var tileCoordinates:FlxPoint = checkHex();
+			if(tileCoordinates != null)
+			{
+				//trace(tileCoordinates.x,tileCoordinates.y);
+				placeMarker(getMidPointFromCoordinates(checkHex()));
+				new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8,this,tileCoordinates.x-1,tileCoordinates.y);
+			}
 		}
 	}
 }

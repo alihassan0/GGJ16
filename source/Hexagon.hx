@@ -8,8 +8,14 @@ import flixel.math.FlxPoint;
 using flixel.util.FlxSpriteUtil;
 
 class Hexagon extends FlxSprite {
-	public function new(x:Float , y:Float , cellSize:Int) {
+	private var grid:Grid;
+	public var indexX:Int;
+	public var indexY:Int;
+	public function new(x:Float , y:Float , cellSize:Int,grid:Grid,indexX:Float, indexY:Float) {
 		super(x,y);
+		this.grid = grid;
+		this.indexX = Math.floor(indexX);
+		this.indexY = Math.floor(indexY);
 		makeGraphic(2*cellSize,2*cellSize, 0x00000000);
 		var cellSize:Int = 20;
 		var vertices = new Array<FlxPoint>();
