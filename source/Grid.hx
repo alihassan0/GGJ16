@@ -18,18 +18,20 @@ class Grid extends FlxSprite{
 	private var gridSizeX:Int = 12;
 	private	var gridSizeY:Int = 10;
 	
-	private var selectedBall:Ball;
 	public var hexagons:Array<Hexagon>;
+	public var balls:Array<Ball>;
+	private var linesSprite:FlxSprite;
+	private var selectedBalls:Array<Ball>;
 	public function new(x:Int, y:Int) {
 		super(x,y);
 		sectorWidth = hexagonWidth;
 		sectorHeight = hexagonHeight/4*3;
 		gradient = (hexagonHeight/4)/(hexagonWidth/2);
 		makeGraphic(400,400,0x00000000);
-
 		var cellSize = 40;
 		columns = [Math.ceil(gridSizeX/2),Math.floor(gridSizeX/2)];
 		hexagons = new Array<Hexagon>();
+		balls = new Array<Ball>();
 		for(i in 0...Math.floor(gridSizeY/2)){
 			for(j in 0...gridSizeX){
 				if(gridSizeY%2==0 || i+1<gridSizeY/2 || j%2==0){
@@ -45,6 +47,9 @@ class Grid extends FlxSprite{
 		//drawGrid(gridCellsX,gridCellsY,gridSpanX,gridSpanY);
 		FlxG.state.add(marker);
 		//fillGridWithBalls();
+		selectedBalls = new Array<Ball>();
+		linesSprite = new FlxSprite(0,0).makeGraphic(FlxG.width,FlxG.height,0x00000000);
+		FlxG.state.add(linesSprite);
 	}
 	public function clearSelection()
 	{
@@ -54,12 +59,23 @@ class Grid extends FlxSprite{
 	}
 	public function selectBall(ball:Ball)
 	{
-		if (ball == selectedBall)
+
+		if (selectedBalls.indexOf(ball) != -1)
 			return ;
 		else 
 		{
-			selectedBall = ball;
-			//code to follow
+			trace("found element @ index = " + selectedBalls.indexOf(ball));
+			selectedBalls.push(ball);
+			if(selectedBalls.length > 1)
+			{
+				var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
+				var startball:Ball = selectedBalls[selectedBalls.length-1];
+				var endBall:Ball = selectedBalls[selectedBalls.length-2];
+				var startPoint = new FlxPoint(startball.x + 20, startball.y + 20);
+				var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
+
+				linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
+			}
 		}
 	}
 	public function highLight(hexagon:Hexagon)
@@ -134,6 +150,16 @@ class Grid extends FlxSprite{
 		}
 		return p;
 	}
+	public function emptyCellAt(pointX:Float,pointY:Float):Bool
+	{
+		var found:Bool = false;
+		for (i in 0 ... balls.length) {
+			if(balls[i].indexX == pointX && balls[i].indexY == pointY)
+				found = true;
+		}
+		trace(found);
+		return !found;
+	}
 	/*public function drawGrid (gridCellsX:Int,gridCellsY:Int,gridSpanX:Int,gridSpanY:Int)
 	{
 		var gridSizeX = gridSpanX*gridCellsX;
@@ -167,8 +193,13 @@ class Grid extends FlxSprite{
 			{
 				//trace(tileCoordinates.x,tileCoordinates.y);
 				placeMarker(getMidPointFromCoordinates(checkHex()));
-				new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8,this,tileCoordinates.x-1,tileCoordinates.y);
+				if(emptyCellAt(tileCoordinates.x-1,tileCoordinates.y))
+					balls.push(new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8,this,tileCoordinates.x-1,tileCoordinates.y));
 			}
+		}
+		if(FlxG.mouse.justReleased)
+		{
+			//linesSprite.color = 0x00000000;
 		}
 	}
 }

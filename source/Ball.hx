@@ -10,8 +10,8 @@ using flixel.util.FlxSpriteUtil;
 
 class Ball extends FlxSprite {
 	private var grid:Grid;
-	private var indexX:Int;
-	private var indexY:Int;
+	public var indexX:Int;
+	public var indexY:Int;
 	public function new(x:Float , y:Float , radius:Int,offset:Int,grid:Grid,indexX:Float, indexY:Float) {
 		super(x,y);
 		this.grid = grid;
@@ -28,6 +28,7 @@ class Ball extends FlxSprite {
 		trace(indexX,indexY);
 		grid.clearSelection();	
 		highLightAdjacents();
+		grid.selectBall(this);
 	}
 	function highLightAdjacents() {
 		var adjacentHexagons:Array<Hexagon> = new Array<Hexagon>();
