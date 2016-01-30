@@ -65,10 +65,29 @@ class Grid extends FlxSprite{
 			{
 				hexagons[i].color = 0xFF00FF00;
 			}
+			if(PointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+				getMidPointFromCoordinates(new FlxPoint(3,2)),
+				getMidPointFromCoordinates(new FlxPoint(5,5))))
+			{
+				hexagons[i].color = 0xFF00FFFF;
+			}/*
+			if(PointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+				getMidPointFromCoordinates(new FlxPoint(1,1)),
+				getMidPointFromCoordinates(new FlxPoint(5,5))))
+			{
+				hexagons[i].color = 0xFF00FFFF;
+			}*/
+		}
+		if(PointInLine(getMidPointFromCoordinates(new FlxPoint(3,3)),
+			getMidPointFromCoordinates(new FlxPoint(0,5)),
+			getMidPointFromCoordinates(new FlxPoint(5,5))))
+		{
+			getHexagonWithCoordinates(new FlxPoint(3,3)).color = 0xFF00FFFF;
 		}
 		getHexagonWithCoordinates(new FlxPoint(0,5)).color = 0xFF000000;
 		getHexagonWithCoordinates(new FlxPoint(3,0)).color = 0xFF000000;
 		getHexagonWithCoordinates(new FlxPoint(5,5)).color = 0xFF000000;
+		getHexagonWithCoordinates(new FlxPoint(1,1)).color = 0xFF000000;
 
 	}
 	public function loadArray(data:Array<Int>)
@@ -300,5 +319,19 @@ class Grid extends FlxSprite{
 	    }
 	    //changed <= a to < a
 	    return s > 0 && t > 0 && (s + t) < a;
+	}
+	public function PointInLine( p:FlxPoint,  p0:FlxPoint,  p1:FlxPoint) 
+	{
+		var tx:Float = (p.x-p0.x)/(p1.x-p0.x);
+		var ty:Float = (p.y-p0.y)/(p1.y-p0.y);
+		trace(tx,ty);
+		if((p.y == p0.y && p0.y == p1.y)||(tx == ty && tx > 0 && tx < 1))
+			{
+				trace("Btngan");
+				return true;
+			}
+		else
+			return false;
+
 	}
 }
