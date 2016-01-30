@@ -17,6 +17,11 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+		add(new FlxSprite(0,0,"assets/images/level1/1.png"));
+
+		//add(new FlxSprite(0,0,"assets/images/level1/2.png"));
+		//add(new FlxSprite(0,0,"assets/images/level1/3.png"));
+		//add(new FlxSprite(0,0,"assets/images/level1/4.png"));
 	}
 	
 	/**

@@ -13,12 +13,13 @@ class Ball extends FlxSprite {
 	public var indexX:Int;
 	public var indexY:Int;
 	public function new(x:Float , y:Float , radius:Int,offset:Int,grid:Grid,indexX:Float, indexY:Float) {
-		super(x,y);
+		super(x,y,"assets/images/charachters/stand1.png");
 		this.grid = grid;
 		this.indexX = Math.floor(indexX);
 		this.indexY = Math.floor(indexY);
-		makeGraphic(3+2*(radius+offset),3+2*(radius+offset), 0x00000000);
-		drawCircle(width/2 ,height/2 , radius, 0xFFFFFFFF);
+		this.offset.set(0,10);
+		//makeGraphic(3+2*(radius+offset),3+2*(radius+offset), 0x00000000);
+		//drawCircle(width/2 ,height/2 , radius, 0xFFFFFFFF);
 		color = 0xFFFF5722 ;
 		FlxMouseEventManager.add(this, onMouseDown,null,onMouseOver,onMouseOut); 
 		

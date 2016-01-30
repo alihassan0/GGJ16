@@ -25,6 +25,8 @@ class MenuState extends FlxState
 	override public function create():Void
 	{
 		this.bgColor = 0xFFBBDEFB;
+		add(new FlxSprite(0,0,"assets/images/level1/1.png"));
+		add(new FlxSprite(0,0,"assets/images/level1/2.png"));
 		FlxG.camera.antialiasing = true;
 		grid = new Grid(0,100);
 		add(stepsCounter = new FlxText(0,10,FlxG.width,"Steps:5").setFormat(null,16,0xFFFF0000,"center"));
@@ -35,6 +37,8 @@ class MenuState extends FlxState
 		//var lightningStyle = { color: 0xFFFF0000, thickness: 3.0 };
 		var lightningStyle:LightningStyle = {thickness: 3.0,displacement: 150,detail:2 ,color:0xFFFFFFFF};
 		//add(lightning = new FlxShapeLightning(0,0,new FlxPoint(0,0),new FlxPoint(250,250),lightningStyle));
+		add(new FlxSprite(0,0,"assets/images/level1/3.png"));
+		add(new FlxSprite(0,0,"assets/images/level1/4.png"));
 	}
 	
 	/**
