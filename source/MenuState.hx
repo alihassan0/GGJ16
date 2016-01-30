@@ -19,6 +19,8 @@ class MenuState extends FlxState
 	private var grid:Grid;
 	private var lightning:FlxShapeLightning;
 	private var stepsCounter:FlxText;
+	private var levelText:FlxText;
+	private var tombsCount:FlxText;
 
 	override public function create():Void
 	{
@@ -26,6 +28,8 @@ class MenuState extends FlxState
 		FlxG.camera.antialiasing = true;
 		grid = new Grid(0,100);
 		add(stepsCounter = new FlxText(0,10,FlxG.width,"Steps:5").setFormat(null,16,0xFFFF0000,"center"));
+		add(levelText = new FlxText(0,10,FlxG.width,"level:1").setFormat(null,16,0xFFFF0000,"left"));
+		add(tombsCount = new FlxText(0,10,FlxG.width,"tombs:1").setFormat(null,16,0xFFFF0000,"right"));
 
 		grid.loadArray(Reg.levelsData[0],5);
 		//var lightningStyle = { color: 0xFFFF0000, thickness: 3.0 };
