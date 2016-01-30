@@ -3,6 +3,7 @@ package;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
+import flixel.input.mouse.FlxMouseEventManager;
 
 using flixel.util.FlxSpriteUtil;
 
@@ -11,11 +12,22 @@ class Ball extends FlxSprite {
 		super(x,y);
 		makeGraphic(3+2*(radius+offset),3+2*(radius+offset), 0x00000000);
 		drawCircle(width/2 ,height/2 , radius, 0xFFFFFFFF);
-		/*if(Math.random()<.5)
-			color = 0xFF004D40;
-		else */
-			color = 0xFFFF5722 ;
-
+		color = 0xFFFF5722 ;
+		FlxMouseEventManager.add(this, onMouseDown,onMouseUp,onMouseOver,onMouseOut); 
+		
 		FlxG.state.add(this);
 	}
+	function onMouseDown(sprite:FlxSprite) {
+		//FlxG.switchState(new PlayState());
+	}
+	function onMouseUp(sprite:FlxSprite) {
+		//FlxG.switchState(new PlayState());
+	}
+	function onMouseOver(sprite:FlxSprite) {
+		color = 0xFFCC4D40;
+	}
+	function onMouseOut(sprite:FlxSprite) {
+		color = 0xFFFF5722 ;
+	}
+
 }
