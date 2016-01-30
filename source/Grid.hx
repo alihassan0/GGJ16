@@ -14,16 +14,18 @@ class Grid extends FlxSprite{
 	private var sectorHeight:Float ;
 	private var gradient:Float;
 	private var marker:FlxSprite;
+	private var columns:Array<Int>;
+	private var gridSizeX:Int = 12;
+	private	var gridSizeY:Int = 10;
 	public function new(x:Int, y:Int) {
 		super(x,y);
 		sectorWidth = hexagonWidth;
 		sectorHeight = hexagonHeight/4*3;
 		gradient = (hexagonHeight/4)/(hexagonWidth/2);
 		makeGraphic(400,400,0x00000000);
-		
-		var gridSizeX:Int = 12;
-		var gridSizeY:Int = 16;
+
 		var cellSize = 40;
+		columns = [Math.ceil(gridSizeX/2),Math.floor(gridSizeX/2)];
 		for(i in 0...Math.floor(gridSizeY/2)){
 			for(j in 0...gridSizeX){
 				if(gridSizeY%2==0 || i+1<gridSizeY/2 || j%2==0){
@@ -72,45 +74,14 @@ class Grid extends FlxSprite{
           }
           placeMarker(candidateX,candidateY);
      }
-	/*function checkHex(){
-          var candidateX:Float = Math.floor((FlxG.mouse.x-x)/40);
-          var candidateY:Float = Math.floor((FlxG.mouse.y-y)/35);
-          var deltaX = (FlxG.mouse.x-x)%sectorWidth;
-          var deltaY = (FlxG.mouse.y-y)%sectorHeight; 
-
-          if(candidateX%2==0){
-               if(deltaX<((hexagonWidth/4)-deltaY*gradient)){
-                    candidateX--;
-                    candidateY--;
-               }
-               if(deltaX<((-hexagonWidth/4)+deltaY*gradient)){
-                    candidateX--;
-               }
-          }    
-          else{
-               if(deltaY>=hexagonHeight/2){
-                    if(deltaX<(hexagonWidth/2-deltaY*gradient)){
-                         candidateX--;
-                    }
-               }
-               else{
-                    if(deltaX<deltaY*gradient){
-                         candidateX--;
-                    }
-                    else{
-                         candidateY--;
-                    }
-               }
-          }
-          placeMarker(candidateX,candidateY);
-     }*/
     public function placeMarker(posX:Float,posY:Float)
     {
-		/*if(posX<0 || posY<0 || posX>=gridSizeX || posY>columns[posX%2]-1){
+		if(posX<1 || posY<0 || posY>=gridSizeY || posX>columns[Math.floor(posY%2)]){
 			marker.visible=false;
 		}
 		else{
-			marker.visible=true;*/
+			marker.visible=true;
+			//trace(posX-1,posY);
           	marker.reset(-4+hexagonWidth*posX,-4+hexagonHeight/4*3*posY+hexagonHeight/2);
 			if(posY%2==0){
 				marker.x += hexagonWidth/2;
@@ -118,7 +89,7 @@ class Grid extends FlxSprite{
 			else{
 				marker.x += hexagonWidth;
 			}
-		//}
+		}
 	}
 	/*public function drawGrid (gridCellsX:Int,gridCellsY:Int,gridSpanX:Int,gridSpanY:Int)
 	{
@@ -145,5 +116,10 @@ class Grid extends FlxSprite{
 	{
 		super.update(elapsed);
 		checkHex();
+		if(FlxG.mouse.pressed && marker.visible)
+		{
+			trace("added new FlxSprite @",marker.x+marker.width/2,marker.y+marker.height/2);
+			new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8);
+		}
 	}
 }
