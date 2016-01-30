@@ -15,7 +15,6 @@ using flixel.util.FlxSpriteUtil;
 
 class Grid extends FlxSprite{
 
-
 	private var hexagonWidth:Int = 40;
 	private var hexagonHeight:Int = 40;
 	private var sectorWidth:Float ;
@@ -93,6 +92,16 @@ class Grid extends FlxSprite{
 		getHexagonWithCoordinates(new FlxPoint(3,0)).color = 0xFF000000;
 		getHexagonWithCoordinates(new FlxPoint(5,5)).color = 0xFF000000;
 		getHexagonWithCoordinates(new FlxPoint(1,1)).color = 0xFF000000;*/
+	}
+	public function killTomb(tomb:Tomb)
+	{
+		tombs.remove(tomb);
+		if(tombs.length == 0)
+		{
+			//advanceLevel();
+			Reg.level ++;		
+			FlxG.resetState();
+		}
 	}
 	public function loadArray(data:Array<Int>,steps:Int)
 	{

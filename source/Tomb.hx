@@ -20,4 +20,8 @@ class Tomb extends Ball {
 	}
 	override public function onMouseOut(sprite:FlxSprite) {
 	}
+	override public function kill() {
+		super.kill();
+		grid.killTomb(this);
+	}
 }

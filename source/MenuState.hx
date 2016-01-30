@@ -31,7 +31,7 @@ class MenuState extends FlxState
 		add(levelText = new FlxText(0,10,FlxG.width,"level:1").setFormat(null,16,0xFFFF0000,"left"));
 		add(tombsCount = new FlxText(0,10,FlxG.width,"tombs:1").setFormat(null,16,0xFFFF0000,"right"));
 
-		grid.loadArray(Reg.levelsData[0],5);
+		grid.loadArray(Reg.levelsData[Reg.level],5);
 		//var lightningStyle = { color: 0xFFFF0000, thickness: 3.0 };
 		var lightningStyle:LightningStyle = {thickness: 3.0,displacement: 150,detail:2 ,color:0xFFFFFFFF};
 		//add(lightning = new FlxShapeLightning(0,0,new FlxPoint(0,0),new FlxPoint(250,250),lightningStyle));
