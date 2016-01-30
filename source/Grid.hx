@@ -29,6 +29,7 @@ class Grid extends FlxSprite{
 	public var balls:Array<Ball>;
 	private var linesSprite:FlxSprite;
 	private var selectedBalls:Array<Ball>;
+	public var steps:Int;
 	public function new(x:Int, y:Int) {
 		super(x,y);
 		sectorWidth = hexagonWidth;
@@ -90,8 +91,9 @@ class Grid extends FlxSprite{
 		getHexagonWithCoordinates(new FlxPoint(1,1)).color = 0xFF000000;
 
 	}
-	public function loadArray(data:Array<Int>)
+	public function loadArray(data:Array<Int>,steps:Int)
 	{
+		this.steps = steps;
 		for (i in 0 ... data.length) {
 			if(data[i]==1)
 			{
@@ -263,7 +265,7 @@ class Grid extends FlxSprite{
 					selectedBalls.splice(0,selectedBalls.length);
 					clearSelection();
 					linesSprite.fill(0x00000000);
-					//steps--;
+					steps--;
 					//balls.push(new Ball(,12,8,this,tileCoordinates.x,tileCoordinates.y));
 					//clear selected
 				}
