@@ -1,6 +1,8 @@
 package;
 /*
-#TODO : adding movement functionality
+#TODO : calculate hit tiles
+#TODO : enhancing the loading functionaity 
+#TODO : calculating steps 
 #TODO : Lightining ray
 
 */
@@ -55,6 +57,19 @@ class Grid extends FlxSprite{
 		selectedBalls = new Array<Ball>();
 		linesSprite = new FlxSprite(0,0).makeGraphic(FlxG.width,FlxG.height,0x00000000);
 		FlxG.state.add(linesSprite);
+		for (i in 0 ... hexagons.length) {
+			if(PointInTriangle(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+				getMidPointFromCoordinates(new FlxPoint(0,5)),
+				getMidPointFromCoordinates(new FlxPoint(3,0)),
+				getMidPointFromCoordinates(new FlxPoint(5,5))))
+			{
+				hexagons[i].color = 0xFF00FF00;
+			}
+		}
+		getHexagonWithCoordinates(new FlxPoint(0,5)).color = 0xFF000000;
+		getHexagonWithCoordinates(new FlxPoint(3,0)).color = 0xFF000000;
+		getHexagonWithCoordinates(new FlxPoint(5,5)).color = 0xFF000000;
+
 	}
 	public function loadArray(data:Array<Int>)
 	{
@@ -162,7 +177,7 @@ class Grid extends FlxSprite{
     		marker.visible = true;
     	}
 	}
-	public function getMidPointFromCoordinates(point:FlxPoint)
+	public function getMidPointFromCoordinates(point:FlxPoint):FlxPoint
 	{
 		if(point == null)
 			return null;	
@@ -239,5 +254,51 @@ class Grid extends FlxSprite{
 		{
 			//linesSprite.color = 0x00000000;
 		}
+	}
+	
+	private function sign ( p1:FlxPoint,  p2:FlxPoint,  p3:FlxPoint):Float
+	{
+		var p2p3:FlxPoint = new FlxPoint(p2.x-p3.x,p2.y-p3.y);  
+		var p1p3:FlxPoint = new FlxPoint(p1.x-p3.x,p1.y-p3.y);  
+		trace(p2p3,p1p3);
+		//var s1:Float = p1p3.x*p2p3.x + p1p3.y*p2p3.y ; 
+		//var s2:Float = p2p3.x*p1p3.x + p2p3.y*p1p3.y ; 
+		var s1:Float = p1p3.x*p2p3.y - p1p3.y*p2p3.x ; 
+		var s2:Float = p2p3.x*p1p3.y - p2p3.y*p1p3.x ; 
+		var s12:Float = s1-s2;
+		trace(s1,s2);
+		return s12;
+	    //return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+	}
+
+	/*private function pointInTriangle (pt:FlxPoint, v1:FlxPoint, v2:FlxPoint, v3:FlxPoint):Bool
+	{
+	    trace(pt,v1,v2,v3);
+	    var b1:Bool;
+	    var b2:Bool;
+	    var b3:Bool;
+	    b1 = sign(pt, v1, v2) < 0.0;
+	    b2 = sign(pt, v2, v3) < 0.0;
+	    b3 = sign(pt, v3, v1) < 0.0;
+	    trace(sign(pt, v1, v2),sign(pt, v2, v3),sign(pt, v3, v1));
+	    return ((b1 == b2) && (b2 == b3));
+	}*/
+	public function PointInTriangle( p:FlxPoint,  p0:FlxPoint,  p1:FlxPoint,  p2:FlxPoint):Bool
+	{
+	    var s:Float = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
+	    var t:Float = p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y;
+
+	    if ((s < 0) != (t < 0))
+	        return false;
+
+	    var a:Float = -p1.y * p2.x + p0.y * (p2.x - p1.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y;
+	    if (a < 0.0)
+	    {
+	        s = -s;
+	        t = -t;
+	        a = -a;
+	    }
+	    //changed <= a to < a
+	    return s > 0 && t > 0 && (s + t) < a;
 	}
 }
