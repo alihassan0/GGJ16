@@ -20,11 +20,11 @@ class Ball extends FlxSprite {
 		makeGraphic(3+2*(radius+offset),3+2*(radius+offset), 0x00000000);
 		drawCircle(width/2 ,height/2 , radius, 0xFFFFFFFF);
 		color = 0xFFFF5722 ;
-		FlxMouseEventManager.add(this, onMouseDown,onMouseUp,onMouseOver,onMouseOut); 
+		FlxMouseEventManager.add(this, onMouseDown,null,onMouseOver,onMouseOut); 
 		
 		FlxG.state.add(this);
 	}
-	function onMouseDown(sprite:FlxSprite) {
+	public function onMouseDown(sprite:FlxSprite) {
 		//trace(indexX,indexY);
 		grid.clearSelection();	
 		highLightAdjacents();
@@ -42,13 +42,11 @@ class Ball extends FlxSprite {
 			grid.highLight(adjacentHexagons[i]);
 		}
 	}
-	function onMouseUp(sprite:FlxSprite) {
-		//FlxG.switchState(new PlayState());
-	}
-	function onMouseOver(sprite:FlxSprite) {
+	
+	public function onMouseOver(sprite:FlxSprite) {
 		color = 0xFFCC4D40;
 	}
-	function onMouseOut(sprite:FlxSprite) {
+	public function onMouseOut(sprite:FlxSprite) {
 		color = 0xFFFF5722 ;
 	}
 

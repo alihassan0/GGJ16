@@ -27,6 +27,7 @@ class Grid extends FlxSprite{
 	
 	public var hexagons:Array<Hexagon>;
 	public var balls:Array<Ball>;
+	public var tombs:Array<Tomb>;
 	private var linesSprite:FlxSprite;
 	private var selectedBalls:Array<Ball>;
 	public var steps:Int;
@@ -40,6 +41,7 @@ class Grid extends FlxSprite{
 		columns = [Math.ceil(gridSizeX/2),Math.floor(gridSizeX/2)];
 		hexagons = new Array<Hexagon>();
 		balls = new Array<Ball>();
+		tombs = new Array<Tomb>();
 		for(i in 0...Math.floor(gridSizeY/2)){
 			for(j in 0...gridSizeX){
 				if(gridSizeY%2==0 || i+1<gridSizeY/2 || j%2==0){
@@ -95,10 +97,13 @@ class Grid extends FlxSprite{
 	{
 		this.steps = steps;
 		for (i in 0 ... data.length) {
-			if(data[i]==1)
+			if(data[i]!=0)
 			{
 				placeMarker(getMidPointFromCoordinates(new FlxPoint(1+i%6,Math.floor(i/6))));
-				balls.push(new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8,this,i%6,Math.floor(i/6)));
+				if(data[i]==1)
+					balls.push(new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8,this,i%6,Math.floor(i/6)));
+				else if(data[i]==2)
+					tombs.push(new Tomb(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8,this,i%6,Math.floor(i/6)));
 			}
 		}
 	}
