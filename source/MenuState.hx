@@ -14,13 +14,23 @@ using flixel.util.FlxSpriteUtil;
 class MenuState extends FlxState
 {
 	private var gridSprite:FlxSprite;
-
+	private var grid:Grid;
 	override public function create():Void
 	{
 		this.bgColor = 0xFFBBDEFB;
 		FlxG.camera.antialiasing = true;
-		new Grid(0,0);
-
+		grid = new Grid(0,0);
+		var level1Data:Array<Int> = [0,0,0,0,0,0,
+								 0,0,0,0,0,0,
+								0,0,0,0,0,0,
+								 0,0,0,0,0,0,
+								1,0,0,2,0,1,
+								 0,0,0,0,0,0,
+								0,0,0,0,0,0,
+								 0,0,0,0,0,0,
+								0,0,0,0,0,0,
+								 0,0,0,0,0,0];
+		grid.loadArray(level1Data);
 	}
 	
 		

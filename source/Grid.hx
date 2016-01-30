@@ -1,11 +1,13 @@
 package;
 /*
-#TODO : only allow lines at straight lines
-
+#TODO : level Array loader
+#TODO : Lightining ray
+#TODO : 
 
 */
 import flixel.FlxSprite;
 import flixel.FlxG;
+import flixel.math.FlxPoint;
 import flixel.math.FlxPoint;
 using flixel.util.FlxSpriteUtil;
 
@@ -55,6 +57,16 @@ class Grid extends FlxSprite{
 		linesSprite = new FlxSprite(0,0).makeGraphic(FlxG.width,FlxG.height,0x00000000);
 		FlxG.state.add(linesSprite);
 	}
+	public function loadArray(data:Array<Int>)
+	{
+		for (i in 0 ... data.length) {
+			if(data[i]==1)
+			{
+				placeMarker(getMidPointFromCoordinates(new FlxPoint(1+i%6,Math.floor(i/6))));
+				balls.push(new Ball(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2,12,8,this,i%6,Math.floor(i/6)));
+			}
+		}
+	}
 	public function clearSelection()
 	{
 		for (i in 0 ... hexagons.length) {
@@ -76,7 +88,7 @@ class Grid extends FlxSprite{
 				trace(Math.abs(lastBall.x- ball.x)*1.5,Math.abs(lastBall.y- ball.y));
 				//this *1.5 is one of the ugliest hacks i ever used
 				if(lastBall.indexY == ball.indexY || 
-					(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2)
+					Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2)
 				{
 					selectedBalls.push(ball);
 					var startball:Ball = selectedBalls[selectedBalls.length-1];
