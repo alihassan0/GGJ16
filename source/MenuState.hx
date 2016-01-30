@@ -19,7 +19,7 @@ class MenuState extends FlxState
 	{
 		this.bgColor = 0xFFBBDEFB;
 		FlxG.camera.antialiasing = true;
-		grid = new Grid(0,0);
+		grid = new Grid(0,100);
 		var level1Data:Array<Int> = [0,0,0,0,0,0,
 								 0,0,0,0,0,0,
 								0,0,0,0,0,0,

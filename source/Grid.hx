@@ -1,8 +1,7 @@
 package;
 /*
-#TODO : level Array loader
+#TODO : adding movement functionality
 #TODO : Lightining ray
-#TODO : 
 
 */
 import flixel.FlxSprite;
@@ -44,7 +43,7 @@ class Grid extends FlxSprite{
 					var hexagonX:Float = cellSize*j/2;
 					var hexagonY:Float = cellSize*i*1.5+(cellSize/4*3)*(j%2);
 					//trace((i%gridSizeX)*2+j%2,Math.floor((Math.floor(j%gridSizeX)/2)));
-					hexagons.push(new Hexagon(hexagonX,hexagonY,cellSize,this,Math.floor((Math.floor(j%gridSizeX)/2)),(i%gridSizeX)*2+j%2));
+					hexagons.push(new Hexagon(x+hexagonX,y+hexagonY,cellSize,this,Math.floor((Math.floor(j%gridSizeX)/2)),(i%gridSizeX)*2+j%2));
 				}
 			}
 		}
@@ -174,6 +173,8 @@ class Grid extends FlxSprite{
 		else{
 			p.x += hexagonWidth;
 		}
+		p.x += x;
+		p.y += y;
 		return p;
 	}
 	public function emptyCellAt(pointX:Float,pointY:Float):Bool
