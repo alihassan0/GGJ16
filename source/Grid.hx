@@ -1,7 +1,10 @@
 package;
 /*
-#TODO : fix bugs that happens after you finish one connection 
+#TODO : fix bugs that happens after you finish one connection since there is two ways of colliosion response
+#TODO : fix a bug where all tiles on the same line is checked agains
 #TODO : calculate hit tiles for tringles
+#TODO : how to clear sequence
+#TODO : if a ball doesn't add to the sequence then it refreshes it .
 #TODO : enhancing the loading functionaity 
 #TODO : calculating steps 
 #TODO : Lightining ray
@@ -127,7 +130,6 @@ class Grid extends FlxSprite{
 	}
 	public function selectBall(ball:Ball)
 	{
-
 		if (selectedBalls.indexOf(ball) != -1)
 			return ;
 		else
@@ -140,10 +142,15 @@ class Grid extends FlxSprite{
 				trace(Math.abs(lastBall.x- ball.x)*1.5,Math.abs(lastBall.y- ball.y));
 				//this *1.5 is one of the ugliest hacks i ever used
 				if(lastBall.indexY == ball.indexY || 
-					Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2)
+					Math.abs(Math.abs(lastBall.x- ball.x)*1.5 - Math.abs(lastBall.y- ball.y))<2)
 				{
+					//account for diagonal cases
+					//account for close hits
 					selectedBalls.push(ball);
 					makeConnection();
+					trace(lastBall.indexY == ball.indexY);
+					trace(Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2);
+					trace(Math.abs(lastBall.indexX- ball.indexX)*1.5, Math.abs(lastBall.indexY- ball.indexY));
 
 				}
 			}
@@ -153,12 +160,15 @@ class Grid extends FlxSprite{
 
 	public function makeConnection()
 	{
+		trace("drawing line");
 		var startBall:Ball = selectedBalls[selectedBalls.length-1];
 		var endBall:Ball = selectedBalls[selectedBalls.length-2];
+
 		//to be refractored later 
 		var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
 		var startPoint = new FlxPoint(startBall.x + 20, startBall.y + 20);
 		var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
+		trace(startPoint,endPoint);
 		linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
 		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
 		for (i in 0 ... hexagons.length) {
@@ -180,12 +190,14 @@ class Grid extends FlxSprite{
 				{
 					//you need to check for multiples and all that .. 
 					tombs[j].kill();
+					refreshGrid();
 					return;
 				}
 				else
 					trace(collidedHexagons[i].indexX,collidedHexagons[i].indexY,tombs[j].indexX,tombs[j].indexY);
 			}
 		}
+		
 	}
 	public function highLight(hexagon:Hexagon)
 	{
@@ -311,13 +323,11 @@ class Grid extends FlxSprite{
 				if(emptyCellAt(tileCoordinates.x,tileCoordinates.y) 
 					&& getHexagonWithCoordinates(tileCoordinates).color == 0xFFFFFFFF)
 				{
+					//movement
 					selectedBalls[selectedBalls.length-1].reset(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2);
 					selectedBalls[selectedBalls.length-1].indexX = Math.floor(tileCoordinates.x);
 					selectedBalls[selectedBalls.length-1].indexY = Math.floor(tileCoordinates.y);
-					selectedBalls.splice(0,selectedBalls.length);
-					clearSelection();
-					linesSprite.fill(0x00000000);
-					decrementSteps();
+					refreshGrid();
 					//balls.push(new Ball(,12,8,this,tileCoordinates.x,tileCoordinates.y));
 					//clear selected
 				}
@@ -331,6 +341,13 @@ class Grid extends FlxSprite{
 			restartLevel();
 	}
 	
+	private function refreshGrid ()
+	{
+		selectedBalls.splice(0,selectedBalls.length);
+		clearSelection();
+		linesSprite.fill(0x00000000);
+		decrementSteps();
+	}
 	private function restartLevel ()
 	{
 		FlxG.resetState();
