@@ -17,7 +17,6 @@ class MenuState extends FlxState
 {
 	private var gridSprite:FlxSprite;
 	private var grid:Grid;
-	private var lightning:FlxShapeLightning;
 	private var stepsCounter:FlxText;
 	private var levelText:FlxText;
 	private var tombsCount:FlxText;
@@ -33,8 +32,7 @@ class MenuState extends FlxState
 
 		grid.loadArray(Reg.levelsData[Reg.level],Reg.levelsMovesData[Reg.level]);
 		//var lightningStyle = { color: 0xFFFF0000, thickness: 3.0 };
-		var lightningStyle:LightningStyle = {thickness: 3.0,displacement: 150,detail:2 ,color:0xFFFFFFFF};
-		//add(lightning = new FlxShapeLightning(0,0,new FlxPoint(0,0),new FlxPoint(250,250),lightningStyle));
+		
 	}
 	
 	/**

@@ -211,6 +211,8 @@ class Grid extends FlxSprite{
 		var startBall:Ball = selectedBalls[selectedBalls.length-1];
 		var endBall:Ball = selectedBalls[selectedBalls.length-2];
 
+		//startBall.startLightning(getMidPointFromCoordinates(new FlxPoint(endBall.indexX+1,endBall.indexY)),150);
+		//endBall.startLightning(getMidPointFromCoordinates(new FlxPoint(startBall.indexX+1,startBall.indexY)),150);
 		
 		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
 		for (i in 0 ... hexagons.length) {
