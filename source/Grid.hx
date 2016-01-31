@@ -1,7 +1,6 @@
 package;
 /*
 #TODO : fix bugs that happens after you finish one connection since there is two ways of colliosion response
-#TODO : fix a bug where all tiles on the same line is checked agains
 #TODO : calculate hit tiles for tringles
 #TODO : how to clear sequence
 #TODO : enhancing the loading functionaity 
@@ -147,6 +146,7 @@ class Grid extends FlxSprite{
 				if(selectedBalls.indexOf(ball) == 0)
 				{
 					trace("case A.2");
+					connectLastTwoPoints();
 					checkLineSpell();// and tile checking
 				}
 			}

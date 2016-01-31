@@ -28,8 +28,8 @@ class MenuState extends FlxState
 		FlxG.camera.antialiasing = true;
 		grid = new Grid(0,100);
 		add(stepsCounter = new FlxText(0,10,FlxG.width,"Steps:5").setFormat(null,16,0xFFFF0000,"center"));
-		add(levelText = new FlxText(0,10,FlxG.width,"level:1").setFormat(null,16,0xFFFF0000,"left"));
-		add(tombsCount = new FlxText(0,10,FlxG.width,"tombs:1").setFormat(null,16,0xFFFF0000,"right"));
+		add(levelText = new FlxText(0,10,FlxG.width,"level:"+Reg.level).setFormat(null,16,0xFFFF0000,"left"));
+		add(tombsCount = new FlxText(0,10,FlxG.width,"tombs:"+grid.tombs.length).setFormat(null,16,0xFFFF0000,"right"));
 
 		grid.loadArray(Reg.levelsData[Reg.level],Reg.levelsMovesData[Reg.level]);
 		//var lightningStyle = { color: 0xFFFF0000, thickness: 3.0 };
@@ -53,6 +53,7 @@ class MenuState extends FlxState
 	{
 		super.update(t);
 		stepsCounter.text = "Steps:"+grid.steps;
+		tombsCount.text = "tombs:"+grid.tombs.length;
 		//lightning.recalculate(new FlxPoint(0,0),new FlxPoint(250,250),50,0);
 	}
 }
