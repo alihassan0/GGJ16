@@ -1,6 +1,5 @@
 package;
 /*
-#TODO : if a ball doesn't add to the sequence then it refreshes it .
 #TODO : fix bugs that happens after you finish one connection since there is two ways of colliosion response
 #TODO : fix a bug where all tiles on the same line is checked agains
 #TODO : calculate hit tiles for tringles
@@ -130,8 +129,29 @@ class Grid extends FlxSprite{
 	}
 	public function selectBall(ball:Ball)
 	{
+		if(selectedBalls.length == 3 && selectedBalls.indexOf(ball) ==-1)
+			refreshGrid();
 		if (selectedBalls.indexOf(ball) != -1)
-			return ;
+		{
+			if(selectedBalls.length == 1)
+			{
+				trace("case A.1");
+				//ignore it he is just clicking the same tile
+			}
+			else if (selectedBalls.length == 2) {
+				if(selectedBalls.indexOf(ball) == 0)
+					trace("case A.2");
+					//makeConnection() and tile checking
+			}
+			else if (selectedBalls.length == 3) {
+				if(selectedBalls.indexOf(ball) == 0)
+					trace("case A.3");
+					//makeTripleConnection()
+			}
+			else {
+				//i shouldn't have more than 3 selected tiles for now
+			}
+		}
 		else
 		{
 			if(selectedBalls.length == 0) 
@@ -197,6 +217,7 @@ class Grid extends FlxSprite{
 					//you need to check for multiples and all that .. 
 					tombs[j].kill();
 					refreshGrid();
+					decrementSteps();
 					return;
 				}
 				else
@@ -334,6 +355,8 @@ class Grid extends FlxSprite{
 					selectedBalls[selectedBalls.length-1].indexX = Math.floor(tileCoordinates.x);
 					selectedBalls[selectedBalls.length-1].indexY = Math.floor(tileCoordinates.y);
 					refreshGrid();
+					decrementSteps();
+
 					//balls.push(new Ball(,12,8,this,tileCoordinates.x,tileCoordinates.y));
 					//clear selected
 				}
@@ -352,7 +375,6 @@ class Grid extends FlxSprite{
 		selectedBalls.splice(0,selectedBalls.length);
 		clearSelection();
 		linesSprite.fill(0x00000000);
-		decrementSteps();
 	}
 	private function restartLevel ()
 	{
