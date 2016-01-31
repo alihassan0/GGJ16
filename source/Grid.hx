@@ -10,6 +10,7 @@ package;
 #TODO : update level tombs count text;
 #TODO : make a better response to the tomb kill()
 #TODO : fix a bug where you can connect tiles even though they are not on the same line 
+#TODO : you can't kill multiple tombs in the same move
 */
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -141,7 +142,7 @@ class Grid extends FlxSprite{
 			else if (selectedBalls.length == 2) {
 				if(selectedBalls.indexOf(ball) == 0)
 					trace("case A.2");
-					//makeConnection() and tile checking
+					checkLineSpell();// and tile checking
 			}
 			else if (selectedBalls.length == 3) {
 				if(selectedBalls.indexOf(ball) == 0)
@@ -167,7 +168,7 @@ class Grid extends FlxSprite{
 					//account for diagonal cases
 					//account for close hits
 					selectedBalls.push(ball);
-					makeConnection();
+					connectLastTwoPoints();
 					trace(lastBall.indexY == ball.indexY);
 					trace(Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2);
 					trace(Math.abs(lastBall.indexX- ball.indexX)*1.5, Math.abs(lastBall.indexY- ball.indexY));
@@ -184,18 +185,25 @@ class Grid extends FlxSprite{
 		}
 	}
 
-	public function makeConnection()
+	public function connectLastTwoPoints()
 	{
-		trace("drawing line");
+		//to be refractored later 
 		var startBall:Ball = selectedBalls[selectedBalls.length-1];
 		var endBall:Ball = selectedBalls[selectedBalls.length-2];
 
-		//to be refractored later 
 		var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
 		var startPoint = new FlxPoint(startBall.x + 20, startBall.y + 20);
 		var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
 		trace(startPoint,endPoint);
 		linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
+	}
+	public function checkLineSpell()
+	{
+		trace("drawing line");
+		var startBall:Ball = selectedBalls[selectedBalls.length-1];
+		var endBall:Ball = selectedBalls[selectedBalls.length-2];
+
+		
 		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
 		for (i in 0 ... hexagons.length) {
 			if(checkPointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
