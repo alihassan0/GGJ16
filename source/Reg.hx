@@ -18,7 +18,7 @@ class Reg
 	 * Generic level variable that can be used for cross-state stuff.
 	 * Example usage: Storing the current level number.
 	 */
-	public static var level:Int = 0;
+	public static var level:Int = 1;
 	/**
 	 * Generic scores Array that can be used for cross-state stuff.
 	 * Example usage: Storing the scores for level.
@@ -35,14 +35,14 @@ class Reg
 	 */
 	public static var saves:Array<FlxSave> = [];
 
-	public static var levelsMovesData:Array<Int> = [100,1,10,14,19];  
+	public static var levelsMovesData:Array<Int> = [100,1,9,8,12];  
 	public static var levelsData:Array<Array<Int>> = 
 	[
 	[1,1,1,1,1,1,
 	  1,1,1,1,1,1,
 	 1,1,1,1,1,1,
 	  1,1,1,1,1,1,
-	 1,1,1,2,1,1,
+	 1,1,2,2,1,1,
 	  1,1,1,1,1,1,
 	 1,1,1,1,1,1,
 	  1,1,1,1,1,1,

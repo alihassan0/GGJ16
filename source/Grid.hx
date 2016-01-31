@@ -1,12 +1,13 @@
 package;
 /*
-#TODO : you can't kill multiple tombs in the same move
-#TODO : only use lightning if someone is killed
+#TODO : you can't kill multiple tombs in the same triangle move
+#TODO : only use lightning if someone is killed 
 #TODO : fix bugs that happens after you finish one connection since there is two ways of colliosion response
 #TODO : calculating steps 
 #TODO : Lightining ray
 #TODO : update level tombs count text;
 #TODO : fix a bug where you can connect tiles even though they are not on the same line 
+#TODO : add feedback for wrong moves (sound or images);
 */
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -210,8 +211,6 @@ class Grid extends FlxSprite{
 		var startBall:Ball = selectedBalls[selectedBalls.length-1];
 		var endBall:Ball = selectedBalls[selectedBalls.length-2];
 
-		startBall.startLightning(getMidPointFromCoordinates(new FlxPoint(endBall.indexX+1,endBall.indexY)),150);
-		endBall.startLightning(getMidPointFromCoordinates(new FlxPoint(startBall.indexX+1,startBall.indexY)),150);
 		
 		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
 		for (i in 0 ... hexagons.length) {
@@ -223,6 +222,7 @@ class Grid extends FlxSprite{
 				hexagons[i].color = 0xFF00FFFF;
 			}
 		}
+		var toBeDestroyedTombs:Array<Tomb> = new Array<Tomb>();
 		//trace(collidedHexagons.length);
 		//trace(tombs.length);
 		for (i in 0 ... collidedHexagons.length) {
@@ -231,15 +231,17 @@ class Grid extends FlxSprite{
 				if(collidedHexagons[i].indexX == tombs[j].indexX && 
 					collidedHexagons[i].indexY == tombs[j].indexY )
 				{
-					//you need to check for multiples and all that .. 
-					tombs[j].kill();
-					refreshGrid();
-					decrementSteps();
-					return;
+					toBeDestroyedTombs.push(tombs[j]);
 				}
-				else
-					trace(collidedHexagons[i].indexX,collidedHexagons[i].indexY,tombs[j].indexX,tombs[j].indexY);
 			}
+		}
+		if(toBeDestroyedTombs.length == 1)
+		{
+			startBall.startLightning(getMidPointFromCoordinates(new FlxPoint(endBall.indexX+1,endBall.indexY)),150);
+			endBall.startLightning(getMidPointFromCoordinates(new FlxPoint(startBall.indexX+1,startBall.indexY)),150);
+			toBeDestroyedTombs[0].kill();
+			refreshGrid();
+			decrementSteps();
 		}
 	}
 	public function checkTriangleSpell()
@@ -248,9 +250,6 @@ class Grid extends FlxSprite{
 		var ball2:Ball = selectedBalls[selectedBalls.length-2];
 		var ball3:Ball = selectedBalls[selectedBalls.length-3];
 
-		ball1.startLightning(getMidPointFromCoordinates(new FlxPoint(ball2.indexX+1,ball2.indexY)),150);
-		ball2.startLightning(getMidPointFromCoordinates(new FlxPoint(ball3.indexX+1,ball3.indexY)),150);
-		ball3.startLightning(getMidPointFromCoordinates(new FlxPoint(ball1.indexX+1,ball1.indexY)),150);
 		
 		
 		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
@@ -264,23 +263,27 @@ class Grid extends FlxSprite{
 				hexagons[i].color = 0xFF00FFFF;
 			}
 		}
-		trace(collidedHexagons.length);
-		trace(tombs.length);
+		var toBeDestroyedTombs:Array<Tomb> = new Array<Tomb>();
+		
 		for (i in 0 ... collidedHexagons.length) {
 			for (j in 0 ... tombs.length) 
 			{
 				if(collidedHexagons[i].indexX == tombs[j].indexX && 
 					collidedHexagons[i].indexY == tombs[j].indexY )
 				{
-					//you need to check for multiples and all that .. 
-					tombs[j].kill();
-					refreshGrid();
-					decrementSteps();
-					return;
+					toBeDestroyedTombs.push(tombs[j]);
 				}
-				else
-					trace(collidedHexagons[i].indexX,collidedHexagons[i].indexY,tombs[j].indexX,tombs[j].indexY);
 			}
+
+		}
+		if(toBeDestroyedTombs.length == 1)
+		{
+			ball1.startLightning(getMidPointFromCoordinates(new FlxPoint(ball2.indexX+1,ball2.indexY)),150);
+			ball2.startLightning(getMidPointFromCoordinates(new FlxPoint(ball3.indexX+1,ball3.indexY)),150);
+			ball3.startLightning(getMidPointFromCoordinates(new FlxPoint(ball1.indexX+1,ball1.indexY)),150);
+			toBeDestroyedTombs[0].kill();
+			refreshGrid();
+			decrementSteps();
 		}
 	}
 	public function highLight(hexagon:Hexagon)
