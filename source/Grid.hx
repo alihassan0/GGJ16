@@ -1,20 +1,21 @@
 package;
 /*
-#TODO : calculate hit tiles
-#TODO : enhancing the loading functionaity 
+#TODO : you can't kill multiple tombs in the same triangle move
+#TODO : only use lightning if someone is killed 
+#TODO : fix bugs that happens after you finish one connection since there is two ways of colliosion response
 #TODO : calculating steps 
-#TODO : Lightining ray
-#TODO : add level tombs count text;
-#TODO : make a better response to the tomb kill()
+#TODO : update level tombs count text;
+#TODO : fix a bug where you can connect tiles even though they are not on the same line 
+#TODO : add feedback for wrong moves (sound or images);
 */
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.math.FlxPoint;
 using flixel.util.FlxSpriteUtil;
+using flixel.util.FlxColor;
 
 class Grid extends FlxSprite{
-
 
 	private var hexagonWidth:Int = 40;
 	private var hexagonHeight:Int = 40;
@@ -94,6 +95,16 @@ class Grid extends FlxSprite{
 		getHexagonWithCoordinates(new FlxPoint(5,5)).color = 0xFF000000;
 		getHexagonWithCoordinates(new FlxPoint(1,1)).color = 0xFF000000;*/
 	}
+	public function killTomb(tomb:Tomb)
+	{
+		tombs.remove(tomb);
+		if(tombs.length == 0)
+		{
+			//advanceLevel();
+			Reg.level ++;		
+			restartLevel();
+		}
+	}
 	public function loadArray(data:Array<Int>,steps:Int)
 	{
 		this.steps = steps;
@@ -116,9 +127,39 @@ class Grid extends FlxSprite{
 	}
 	public function selectBall(ball:Ball)
 	{
-
+		if(selectedBalls.length == 3 && selectedBalls.indexOf(ball) ==-1)
+		{
+			refreshGrid();
+			return;
+		}
 		if (selectedBalls.indexOf(ball) != -1)
-			return ;
+		{
+			if(selectedBalls.length == 1)
+			{
+				trace("case A.1");
+				//ignore it he is just clicking the same tile
+			}
+			else if (selectedBalls.length == 2) {
+				if(selectedBalls.indexOf(ball) == 0)
+				{
+					trace("case A.2");
+					connectLastTwoPoints();
+					checkLineSpell();// and tile checking
+				}
+			}
+			else if (selectedBalls.length == 3) {
+				if(selectedBalls.indexOf(ball) == 0)
+				{
+					trace("case A.3");
+					selectedBalls.push(ball);
+					connectLastTwoPoints();
+					checkTriangleSpell();
+				}
+			}
+			else {
+				//i shouldn't have more than 3 selected tiles for now
+			}
+		}
 		else
 		{
 			if(selectedBalls.length == 0) 
@@ -126,29 +167,50 @@ class Grid extends FlxSprite{
 			else 
 			{
 				var lastBall:Ball = selectedBalls[selectedBalls.length-1];
-				trace(Math.abs(lastBall.x- ball.x)*1.5,Math.abs(lastBall.y- ball.y));
+				//trace(Math.abs(lastBall.x- ball.x)*1.5,Math.abs(lastBall.y- ball.y));
 				//this *1.5 is one of the ugliest hacks i ever used
 				if(lastBall.indexY == ball.indexY || 
-					Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2)
+					Math.abs(Math.abs(lastBall.x- ball.x)*1.5 - Math.abs(lastBall.y- ball.y))<2)
 				{
+					//account for diagonal cases
+					//account for close hits
 					selectedBalls.push(ball);
-					makeConnection();
+					connectLastTwoPoints();
+					//trace(lastBall.indexY == ball.indexY);
+					//trace(Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2);
+					//trace(Math.abs(lastBall.indexX- ball.indexX)*1.5, Math.abs(lastBall.indexY- ball.indexY));
 
+				}
+				else
+				{
+					selectedBalls.splice(0,selectedBalls.length);
+					linesSprite.fill(0x00000000);
+					selectedBalls.push(ball);
 				}
 			}
 
 		}
 	}
 
-	public function makeConnection()
+	public function connectLastTwoPoints()
 	{
+		//to be refractored later 
 		var startBall:Ball = selectedBalls[selectedBalls.length-1];
 		var endBall:Ball = selectedBalls[selectedBalls.length-2];
-		//to be refractored later 
+
 		var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
 		var startPoint = new FlxPoint(startBall.x + 20, startBall.y + 20);
 		var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
+		//trace(startPoint,endPoint);
 		linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
+	}
+	public function checkLineSpell()
+	{
+		//trace("drawing line");
+		var startBall:Ball = selectedBalls[selectedBalls.length-1];
+		var endBall:Ball = selectedBalls[selectedBalls.length-2];
+
+		
 		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
 		for (i in 0 ... hexagons.length) {
 			if(checkPointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
@@ -159,21 +221,68 @@ class Grid extends FlxSprite{
 				hexagons[i].color = 0xFF00FFFF;
 			}
 		}
-		trace(collidedHexagons.length);
-		trace(tombs.length);
+		var toBeDestroyedTombs:Array<Tomb> = new Array<Tomb>();
+		//trace(collidedHexagons.length);
+		//trace(tombs.length);
 		for (i in 0 ... collidedHexagons.length) {
 			for (j in 0 ... tombs.length) 
 			{
 				if(collidedHexagons[i].indexX == tombs[j].indexX && 
 					collidedHexagons[i].indexY == tombs[j].indexY )
 				{
-					//you need to check for multiples and all that .. 
-					tombs[j].kill();
-					return;
+					toBeDestroyedTombs.push(tombs[j]);
 				}
-				else
-					trace(collidedHexagons[i].indexX,collidedHexagons[i].indexY,tombs[j].indexX,tombs[j].indexY);
 			}
+		}
+		if(toBeDestroyedTombs.length == 1)
+		{
+			startBall.startLightning(getMidPointFromCoordinates(new FlxPoint(endBall.indexX+1,endBall.indexY)),150);
+			endBall.startLightning(getMidPointFromCoordinates(new FlxPoint(startBall.indexX+1,startBall.indexY)),150);
+			toBeDestroyedTombs[0].kill();
+			refreshGrid();
+			decrementSteps();
+		}
+	}
+	public function checkTriangleSpell()
+	{
+		var ball1:Ball = selectedBalls[selectedBalls.length-1];
+		var ball2:Ball = selectedBalls[selectedBalls.length-2];
+		var ball3:Ball = selectedBalls[selectedBalls.length-3];
+
+		
+		
+		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
+		for (i in 0 ... hexagons.length) {
+			if(checkPointInTriangle(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+				getMidPointFromCoordinates(new FlxPoint(ball1.indexX,ball1.indexY)),
+				getMidPointFromCoordinates(new FlxPoint(ball2.indexX,ball2.indexY)),
+				getMidPointFromCoordinates(new FlxPoint(ball3.indexX,ball3.indexY))))
+			{
+				collidedHexagons.push(hexagons[i]);
+				hexagons[i].color = 0xFF00FFFF;
+			}
+		}
+		var toBeDestroyedTombs:Array<Tomb> = new Array<Tomb>();
+		
+		for (i in 0 ... collidedHexagons.length) {
+			for (j in 0 ... tombs.length) 
+			{
+				if(collidedHexagons[i].indexX == tombs[j].indexX && 
+					collidedHexagons[i].indexY == tombs[j].indexY )
+				{
+					toBeDestroyedTombs.push(tombs[j]);
+				}
+			}
+
+		}
+		if(toBeDestroyedTombs.length == 1)
+		{
+			ball1.startLightning(getMidPointFromCoordinates(new FlxPoint(ball2.indexX+1,ball2.indexY)),150);
+			ball2.startLightning(getMidPointFromCoordinates(new FlxPoint(ball3.indexX+1,ball3.indexY)),150);
+			ball3.startLightning(getMidPointFromCoordinates(new FlxPoint(ball1.indexX+1,ball1.indexY)),150);
+			toBeDestroyedTombs[0].kill();
+			refreshGrid();
+			decrementSteps();
 		}
 	}
 	public function highLight(hexagon:Hexagon)
@@ -300,13 +409,13 @@ class Grid extends FlxSprite{
 				if(emptyCellAt(tileCoordinates.x,tileCoordinates.y) 
 					&& getHexagonWithCoordinates(tileCoordinates).color == 0xFFFFFFFF)
 				{
+					//movement
 					selectedBalls[selectedBalls.length-1].reset(-21.25+marker.x+marker.width/2,-21.25+marker.y+marker.height/2);
 					selectedBalls[selectedBalls.length-1].indexX = Math.floor(tileCoordinates.x);
 					selectedBalls[selectedBalls.length-1].indexY = Math.floor(tileCoordinates.y);
-					selectedBalls.splice(0,selectedBalls.length);
-					clearSelection();
-					linesSprite.fill(0x00000000);
-					steps--;
+					refreshGrid();
+					decrementSteps();
+
 					//balls.push(new Ball(,12,8,this,tileCoordinates.x,tileCoordinates.y));
 					//clear selected
 				}
@@ -316,35 +425,30 @@ class Grid extends FlxSprite{
 		{
 			//linesSprite.color = 0x00000000;
 		}
+		if(FlxG.keys.justPressed.R)
+			restartLevel();
 	}
 	
-	private function sign ( p1:FlxPoint,  p2:FlxPoint,  p3:FlxPoint):Float
+	private function refreshGrid ()
 	{
-		var p2p3:FlxPoint = new FlxPoint(p2.x-p3.x,p2.y-p3.y);  
-		var p1p3:FlxPoint = new FlxPoint(p1.x-p3.x,p1.y-p3.y);  
-		trace(p2p3,p1p3);
-		//var s1:Float = p1p3.x*p2p3.x + p1p3.y*p2p3.y ; 
-		//var s2:Float = p2p3.x*p1p3.x + p2p3.y*p1p3.y ; 
-		var s1:Float = p1p3.x*p2p3.y - p1p3.y*p2p3.x ; 
-		var s2:Float = p2p3.x*p1p3.y - p2p3.y*p1p3.x ; 
-		var s12:Float = s1-s2;
-		trace(s1,s2);
-		return s12;
-	    //return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+		selectedBalls.splice(0,selectedBalls.length);
+		clearSelection();
+		linesSprite.fill(0x00000000);
 	}
-
-	/*private function checkpointInTriangle (pt:FlxPoint, v1:FlxPoint, v2:FlxPoint, v3:FlxPoint):Bool
+	private function restartLevel ()
 	{
-	    trace(pt,v1,v2,v3);
-	    var b1:Bool;
-	    var b2:Bool;
-	    var b3:Bool;
-	    b1 = sign(pt, v1, v2) < 0.0;
-	    b2 = sign(pt, v2, v3) < 0.0;
-	    b3 = sign(pt, v3, v1) < 0.0;
-	    trace(sign(pt, v1, v2),sign(pt, v2, v3),sign(pt, v3, v1));
-	    return ((b1 == b2) && (b2 == b3));
-	}*/
+		FlxG.camera.fade(FlxColor.BLACK,.8, false, function() {
+			FlxG.resetState();
+		});
+	}
+	private function decrementSteps ()
+	{
+		steps --;
+		if(steps < 0)
+		{
+			restartLevel();
+		}	
+	}
 	public function checkPointInTriangle( p:FlxPoint,  p0:FlxPoint,  p1:FlxPoint,  p2:FlxPoint):Bool
 	{
 	    var s:Float = p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y;
@@ -367,7 +471,8 @@ class Grid extends FlxSprite{
 	{
 		var tx:Float = (p.x-p0.x)/(p1.x-p0.x);
 		var ty:Float = (p.y-p0.y)/(p1.y-p0.y);
-		if((p.y == p0.y && p0.y == p1.y && p.x != p0.x && p.x != p1.x )||(tx == ty && tx > 0 && tx < 1))
+		if((p.y == p0.y && p0.y == p1.y && p.x != p0.x && p.x != p1.x && p.x > Math.min(p0.x,p1.x) && p.x < Math.max(p0.x,p1.x))
+			||(tx == ty && tx > 0 && tx < 1))
 			{
 				trace("Btngan");
 				return true;
