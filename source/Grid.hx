@@ -410,7 +410,8 @@ class Grid extends FlxSprite{
 	{
 		var tx:Float = (p.x-p0.x)/(p1.x-p0.x);
 		var ty:Float = (p.y-p0.y)/(p1.y-p0.y);
-		if((p.y == p0.y && p0.y == p1.y && p.x != p0.x && p.x != p1.x )||(tx == ty && tx > 0 && tx < 1))
+		if((p.y == p0.y && p0.y == p1.y && p.x != p0.x && p.x != p1.x && p.x > Math.min(p0.x,p1.x) && p.x < Math.max(p0.x,p1.x))
+			||(tx == ty && tx > 0 && tx < 1))
 			{
 				trace("Btngan");
 				return true;
