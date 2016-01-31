@@ -17,6 +17,7 @@ import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.math.FlxPoint;
 using flixel.util.FlxSpriteUtil;
+using flixel.util.FlxColor;
 
 class Grid extends FlxSprite{
 
@@ -131,7 +132,10 @@ class Grid extends FlxSprite{
 	public function selectBall(ball:Ball)
 	{
 		if(selectedBalls.length == 3 && selectedBalls.indexOf(ball) ==-1)
+		{
 			refreshGrid();
+			return;
+		}
 		if (selectedBalls.indexOf(ball) != -1)
 		{
 			if(selectedBalls.length == 1)
@@ -141,13 +145,17 @@ class Grid extends FlxSprite{
 			}
 			else if (selectedBalls.length == 2) {
 				if(selectedBalls.indexOf(ball) == 0)
+				{
 					trace("case A.2");
 					checkLineSpell();// and tile checking
+				}
 			}
 			else if (selectedBalls.length == 3) {
 				if(selectedBalls.indexOf(ball) == 0)
+				{
 					trace("case A.3");
-					//makeTripleConnection()
+					checkTriangleSpell();
+				}
 			}
 			else {
 				//i shouldn't have more than 3 selected tiles for now
@@ -160,7 +168,7 @@ class Grid extends FlxSprite{
 			else 
 			{
 				var lastBall:Ball = selectedBalls[selectedBalls.length-1];
-				trace(Math.abs(lastBall.x- ball.x)*1.5,Math.abs(lastBall.y- ball.y));
+				//trace(Math.abs(lastBall.x- ball.x)*1.5,Math.abs(lastBall.y- ball.y));
 				//this *1.5 is one of the ugliest hacks i ever used
 				if(lastBall.indexY == ball.indexY || 
 					Math.abs(Math.abs(lastBall.x- ball.x)*1.5 - Math.abs(lastBall.y- ball.y))<2)
@@ -169,9 +177,9 @@ class Grid extends FlxSprite{
 					//account for close hits
 					selectedBalls.push(ball);
 					connectLastTwoPoints();
-					trace(lastBall.indexY == ball.indexY);
-					trace(Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2);
-					trace(Math.abs(lastBall.indexX- ball.indexX)*1.5, Math.abs(lastBall.indexY- ball.indexY));
+					//trace(lastBall.indexY == ball.indexY);
+					//trace(Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2);
+					//trace(Math.abs(lastBall.indexX- ball.indexX)*1.5, Math.abs(lastBall.indexY- ball.indexY));
 
 				}
 				else
@@ -194,12 +202,12 @@ class Grid extends FlxSprite{
 		var lineStyle = { color: 0xFFFF0000, thickness: 3.0 };
 		var startPoint = new FlxPoint(startBall.x + 20, startBall.y + 20);
 		var endPoint = new FlxPoint(endBall.x + 20, endBall.y + 20);
-		trace(startPoint,endPoint);
+		//trace(startPoint,endPoint);
 		linesSprite.drawLine(startPoint.x,startPoint.y,endPoint.x,endPoint.y, lineStyle);
 	}
 	public function checkLineSpell()
 	{
-		trace("drawing line");
+		//trace("drawing line");
 		var startBall:Ball = selectedBalls[selectedBalls.length-1];
 		var endBall:Ball = selectedBalls[selectedBalls.length-2];
 
@@ -209,6 +217,43 @@ class Grid extends FlxSprite{
 			if(checkPointInLine(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
 				getMidPointFromCoordinates(new FlxPoint(startBall.indexX,startBall.indexY)),
 				getMidPointFromCoordinates(new FlxPoint(endBall.indexX,endBall.indexY))))
+			{
+				collidedHexagons.push(hexagons[i]);
+				hexagons[i].color = 0xFF00FFFF;
+			}
+		}
+		//trace(collidedHexagons.length);
+		//trace(tombs.length);
+		for (i in 0 ... collidedHexagons.length) {
+			for (j in 0 ... tombs.length) 
+			{
+				if(collidedHexagons[i].indexX == tombs[j].indexX && 
+					collidedHexagons[i].indexY == tombs[j].indexY )
+				{
+					//you need to check for multiples and all that .. 
+					tombs[j].kill();
+					refreshGrid();
+					decrementSteps();
+					return;
+				}
+				else
+					trace(collidedHexagons[i].indexX,collidedHexagons[i].indexY,tombs[j].indexX,tombs[j].indexY);
+			}
+		}
+	}
+	public function checkTriangleSpell()
+	{
+		var ball1:Ball = selectedBalls[selectedBalls.length-1];
+		var ball2:Ball = selectedBalls[selectedBalls.length-2];
+		var ball3:Ball = selectedBalls[selectedBalls.length-3];
+
+		
+		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
+		for (i in 0 ... hexagons.length) {
+			if(checkPointInTriangle(getMidPointFromCoordinates(new FlxPoint(hexagons[i].indexX,hexagons[i].indexY)),
+				getMidPointFromCoordinates(new FlxPoint(ball1.indexX,ball1.indexY)),
+				getMidPointFromCoordinates(new FlxPoint(ball2.indexX,ball2.indexY)),
+				getMidPointFromCoordinates(new FlxPoint(ball3.indexX,ball3.indexY))))
 			{
 				collidedHexagons.push(hexagons[i]);
 				hexagons[i].color = 0xFF00FFFF;
@@ -232,7 +277,6 @@ class Grid extends FlxSprite{
 					trace(collidedHexagons[i].indexX,collidedHexagons[i].indexY,tombs[j].indexX,tombs[j].indexY);
 			}
 		}
-		
 	}
 	public function highLight(hexagon:Hexagon)
 	{
@@ -386,7 +430,9 @@ class Grid extends FlxSprite{
 	}
 	private function restartLevel ()
 	{
-		FlxG.resetState();
+		FlxG.camera.fade(FlxColor.BLACK,.8, false, function() {
+			FlxG.resetState();
+		});
 	}
 	private function decrementSteps ()
 	{
