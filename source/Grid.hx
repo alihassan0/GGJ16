@@ -1,15 +1,12 @@
 package;
 /*
+#TODO : you can't kill multiple tombs in the same move
+#TODO : only use lightning if someone is killed
 #TODO : fix bugs that happens after you finish one connection since there is two ways of colliosion response
-#TODO : calculate hit tiles for tringles
-#TODO : how to clear sequence
-#TODO : enhancing the loading functionaity 
 #TODO : calculating steps 
 #TODO : Lightining ray
 #TODO : update level tombs count text;
-#TODO : make a better response to the tomb kill()
 #TODO : fix a bug where you can connect tiles even though they are not on the same line 
-#TODO : you can't kill multiple tombs in the same move
 */
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -154,6 +151,8 @@ class Grid extends FlxSprite{
 				if(selectedBalls.indexOf(ball) == 0)
 				{
 					trace("case A.3");
+					selectedBalls.push(ball);
+					connectLastTwoPoints();
 					checkTriangleSpell();
 				}
 			}
@@ -211,8 +210,8 @@ class Grid extends FlxSprite{
 		var startBall:Ball = selectedBalls[selectedBalls.length-1];
 		var endBall:Ball = selectedBalls[selectedBalls.length-2];
 
-		//startBall.startLightning(getMidPointFromCoordinates(new FlxPoint(endBall.indexX+1,endBall.indexY)),150);
-		//endBall.startLightning(getMidPointFromCoordinates(new FlxPoint(startBall.indexX+1,startBall.indexY)),150);
+		startBall.startLightning(getMidPointFromCoordinates(new FlxPoint(endBall.indexX+1,endBall.indexY)),150);
+		endBall.startLightning(getMidPointFromCoordinates(new FlxPoint(startBall.indexX+1,startBall.indexY)),150);
 		
 		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
 		for (i in 0 ... hexagons.length) {
@@ -249,6 +248,10 @@ class Grid extends FlxSprite{
 		var ball2:Ball = selectedBalls[selectedBalls.length-2];
 		var ball3:Ball = selectedBalls[selectedBalls.length-3];
 
+		ball1.startLightning(getMidPointFromCoordinates(new FlxPoint(ball2.indexX+1,ball2.indexY)),150);
+		ball2.startLightning(getMidPointFromCoordinates(new FlxPoint(ball3.indexX+1,ball3.indexY)),150);
+		ball3.startLightning(getMidPointFromCoordinates(new FlxPoint(ball1.indexX+1,ball1.indexY)),150);
+		
 		
 		var collidedHexagons:Array<Hexagon> = new Array<Hexagon>();
 		for (i in 0 ... hexagons.length) {

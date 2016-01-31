@@ -45,9 +45,8 @@ class Ball extends FlxSprite {
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		trace(x+width/2,y +height/2);
 
-		if(lightningTarget != null)
+		if(lightningTarget != null && lightningTime < lightningMaxTime)
 		{
 			lightning.reset(x+width/2,y+height/2);
 			lightning.recalculate(new FlxPoint(0,0),lightningTarget,50,0);
@@ -56,7 +55,7 @@ class Ball extends FlxSprite {
 		}
 		else 
 		{
-			//lightning.visible = false;
+			lightning.visible = false;
 		}
 	}
 	public function onMouseDown(sprite:FlxSprite) {
