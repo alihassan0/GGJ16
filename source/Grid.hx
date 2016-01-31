@@ -1,10 +1,10 @@
 package;
 /*
+#TODO : if a ball doesn't add to the sequence then it refreshes it .
 #TODO : fix bugs that happens after you finish one connection since there is two ways of colliosion response
 #TODO : fix a bug where all tiles on the same line is checked agains
 #TODO : calculate hit tiles for tringles
 #TODO : how to clear sequence
-#TODO : if a ball doesn't add to the sequence then it refreshes it .
 #TODO : enhancing the loading functionaity 
 #TODO : calculating steps 
 #TODO : Lightining ray
@@ -152,6 +152,12 @@ class Grid extends FlxSprite{
 					trace(Math.abs(Math.abs(lastBall.indexX- ball.indexX)*1.5 - Math.abs(lastBall.indexY- ball.indexY))<2);
 					trace(Math.abs(lastBall.indexX- ball.indexX)*1.5, Math.abs(lastBall.indexY- ball.indexY));
 
+				}
+				else
+				{
+					selectedBalls.splice(0,selectedBalls.length);
+					linesSprite.fill(0x00000000);
+					selectedBalls.push(ball);
 				}
 			}
 
