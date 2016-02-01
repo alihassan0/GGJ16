@@ -57,4 +57,5 @@ class MenuState extends FlxState
 		tombsCount.text = "tombs:"+grid.tombs.length;
 		//lightning.recalculate(new FlxPoint(0,0),new FlxPoint(250,250),50,0);
 	}
+	
 }

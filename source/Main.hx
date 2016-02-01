@@ -23,6 +23,7 @@ class Main extends Sprite
 	public static function main():Void
 	{	
 		Lib.current.addChild(new Main());
+		
 	}
 	
 	public function new() 

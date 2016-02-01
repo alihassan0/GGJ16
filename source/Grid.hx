@@ -1,12 +1,9 @@
 package;
 /*
-#TODO : you can't kill multiple tombs in the same triangle move
-#TODO : only use lightning if someone is killed 
-#TODO : fix bugs that happens after you finish one connection since there is two ways of colliosion response
-#TODO : calculating steps 
-#TODO : update level tombs count text;
-#TODO : fix a bug where you can connect tiles even though they are not on the same line 
+#TODO : 
 #TODO : add feedback for wrong moves (sound or images);
+
+#milestones : 1:30 loaded lightning title
 */
 import flixel.FlxSprite;
 import flixel.FlxG;

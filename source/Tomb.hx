@@ -16,6 +16,7 @@ class Tomb extends Ball {
 		centerOffsets();
 		this.offset.y += 20;
 		color = 0xFFFFFFFF ;
+		
 	}
 	override public function onMouseDown(sprite:FlxSprite) {
 
